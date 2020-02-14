@@ -18,7 +18,6 @@
               定休日：{{json.first.close}}<br><br>
               <a class="first_shop_search" @click="firstSearch(id)" v-bind:href="detail + shopid + f_lat + lat + f_lng + lng + li + listid + det + detname">詳細ページへ</a>
               </div>
-              <!-- <img v-bind:src="json.first.photo.pc.m"> -->
             </div><!-- hashigo_li -->
 
             <div class="hashigo_li">
@@ -33,11 +32,10 @@
               <span v-if="json.third"><img v-bind:src="json.third.photo.pc.m"></span>
               <a v-else class="third_shop_search" @click="thirdSearch(id)" v-bind:href="detail + shopid + f_lat + lat + f_lng + lng + li + listid + his + hisname">3軒目を探す</a>
               <div class="hashigo_shop">3軒目：{{ (json.third)?json.third.name:'未登録です'}}<br>
-              <span v-if="json.third">定休日：{{json.third?json.third.close:''}}</span><br>
+              <span v-if="json.third">定休日：{{json.third?json.third.close:''}}</span><br><br>
+              <a v-if="json.third" class="Second_shop_search" @click="thirdSearch_s(id)" v-bind:href="detail + shopid + f_lat + lat + f_lng + lng + li + listid + det + detname">詳細ページへ</a>
               <!-- <span v-if="json.third"><a v-bind:href="json.second.urls.pc" target="_blank">{{ json.second.name }}の公式</a></span> -->
               </div>
-              <!-- <span v-if="json.third"><img v-bind:src="json.third.photo.pc.m"></span>
-              <a v-else class="third_shop_search" @click="thirdSearch(id)" v-bind:href="detail + shopid + f_lat + lat + f_lng + lng + li + listid + his + hisname">3軒目を探す</a> -->
             </div><!-- hashigo_li -->
           </li>
         </ul>
@@ -114,6 +112,15 @@ export default {
       this.shopid = this.jsons[id].second.id;
       this.lat = this.jsons[id].second.lat;
       this.lng = this.jsons[id].second.lng;
+      this.listid = id
+    },
+
+    //1軒目詳細に遷移(履歴3)
+    thirdSearch_s(id){
+      this.detname = this.jsons[id].third.name;
+      this.shopid = this.jsons[id].third.id;
+      this.lat = this.jsons[id].third.lat;
+      this.lng = this.jsons[id].third.lng;
       this.listid = id
     },
   }

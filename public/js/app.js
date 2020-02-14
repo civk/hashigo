@@ -2586,8 +2586,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 // import MypageHashigo from './MypageHashigo.vue'
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -2646,6 +2644,14 @@ __webpack_require__.r(__webpack_exports__);
       this.shopid = this.jsons[id].second.id;
       this.lat = this.jsons[id].second.lat;
       this.lng = this.jsons[id].second.lng;
+      this.listid = id;
+    },
+    //1軒目詳細に遷移(履歴3)
+    thirdSearch_s: function thirdSearch_s(id) {
+      this.detname = this.jsons[id].third.name;
+      this.shopid = this.jsons[id].third.id;
+      this.lat = this.jsons[id].third.lat;
+      this.lng = this.jsons[id].third.lng;
       this.listid = id;
     }
   }
@@ -49440,7 +49446,36 @@ var render = function() {
                             )
                           ])
                         : _vm._e(),
-                      _c("br")
+                      _c("br"),
+                      _c("br"),
+                      _vm._v(" "),
+                      json.third
+                        ? _c(
+                            "a",
+                            {
+                              staticClass: "Second_shop_search",
+                              attrs: {
+                                href:
+                                  _vm.detail +
+                                  _vm.shopid +
+                                  _vm.f_lat +
+                                  _vm.lat +
+                                  _vm.f_lng +
+                                  _vm.lng +
+                                  _vm.li +
+                                  _vm.listid +
+                                  _vm.det +
+                                  _vm.detname
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.thirdSearch_s(id)
+                                }
+                              }
+                            },
+                            [_vm._v("詳細ページへ")]
+                          )
+                        : _vm._e()
                     ])
                   ])
                 ])
