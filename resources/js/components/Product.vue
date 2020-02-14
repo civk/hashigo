@@ -21,10 +21,13 @@
                     <span class="pan_name">{{ s_name }}</span><br>
                     <!--非ログインとログイン-->
                     <div v-if="isActive">
+                        <!--alart用ボタン-->
                         <button id="hashigo_save" v-on:click="alert" v-bind:disabled="alert_click">はしご保存</button>
+                        <button id="hashigo_save" type="submit" @click="currentsearch">現在地</button>
                     </div>
                     <div v-else>
                         <button id="hashigo_save" v-bind:disabled="insertClick" v-on:click="insertList(f_id,s_id,userid)">はしご保存</button>
+                        <button id="hashigo_save" type="submit" @click="currentsearch">現在地</button>
                     </div>
                 </div>
                 <div v-else>
@@ -40,9 +43,12 @@
                 </div>
                 <br>
                 <div id="shop_info">
-                    住所：{{ tel_add }}<br><hr>
-                    営業時間：{{ time }}<br><hr>
-                    収容人数：{{ capa }}  /  クレジット：{{ credit }}<br><hr>
+                    <p>住所：{{ tel_add }}</p><hr>
+                    <p>営業時間：{{ time }}</p><hr>
+                    <p>飲み放題：{{ drink }}</p><hr>
+                    <p>食べ放題：{{ eat }}</p><hr>
+                    <p>総席数：{{ capa }} 　/　禁煙席：{{ smoking }}　/　クレジット：{{ credit }}</p><hr>
+                    <p>アクセス：{{ access }}</p>
                 </div>
             </div>
         </div>
@@ -75,6 +81,9 @@
         </div>
             <span class="hot_text">Powered by <a href="http://webservice.recruit.co.jp/">ホットペッパー Webサービス</a></span>
             <span class="hot_text">画像提供：ホットペッパー グルメ</span>
+
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.4/css/all.css">
+            <div id="page_top"><a href="#"></a></div>
     </div>
 </div>
 </template> 
@@ -118,6 +127,10 @@ export default {
             time:"",
             capa:"",
             credit:"",
+            smoking:"",
+            dirnk:"",
+            eat:"",
+            access:"",
             //一件目
             f_name:"",
             //二件目と三件目
@@ -135,6 +148,8 @@ export default {
             isActive:true,
             alert_click:false,
             second_name:"",
+             //現在地の情報
+            current:[],
         }
     },
 
@@ -148,11 +163,14 @@ export default {
         this.shop_name = json[0].name
         //２件目
         this.second_name= json[0].name
-
         this.tel_add = json[0].address
         this.time = json[0].open
         this.capa = json[0].capacity
         this.credit = json[0].card
+        this.drink = json[0].free_drink
+        this.eat = json[0].free_food
+        this.smoking = json[0].non_smoking
+        this.access = json[0].access
         this.o_url = json[0].urls.pc
         //パンくずリスト一件目（固定）
         if(!this.hisname){
@@ -168,6 +186,29 @@ export default {
     },
 
     methods: {
+         //現在地取得
+        currentPosition () {
+            return new Promise(function(resolve,reject){
+                navigator.geolocation.getCurrentPosition((position)=>{resolve(position.coords)})
+            })
+        },
+        //マーカーアイテム２を作り現在地にピンを立てる
+        setcentermarker(lat,lng){
+            this.current=[];
+            this.$refs.map.panTo({lat: lat, lng: lng})
+            this.current.push({
+                position: {lat: lat, lng: lng}, 
+                title: '現在地', 
+                icon: {url:'http://pictogram2.com/p/p0957/3.png',scaledSize:{width:70,height:75} ,scaledColor:'#0000'}})
+        },
+
+        // 現在位置取得
+        async currentsearch(){
+            let position = await this.currentPosition()
+            let lat = position.latitude
+            let lng = position.longitude
+            this.setcentermarker(lat,lng)
+        },
 
         // キーワード位置取得
         keywordPosition () {
@@ -182,9 +223,9 @@ export default {
             this.$refs.map.panTo({lat: lat, lng: lng})
             //2軒目と3軒目で、現在地のicon変更
             if(!this.hisname){
-                this.marker_items.push({position: {lat: lat, lng: lng}, title: '現在地', icon: {url: 'http://pictogram2.com/p/p0115/1.png',scaledSize:{width:70,height:75} ,scaledColor: '#0000'}})
+                this.marker_items.push({position: {lat: lat, lng: lng}, title: '現在地', icon: {url: 'http://pictogram2.com/p/p0957/3.png',scaledSize:{width:70,height:75} ,scaledColor: '#0000'}})
             }else{
-                this.marker_items.push({position: {lat: lat, lng: lng}, title: '現在地', icon: {url: 'http://pictogram2.com/p/p0958/3.png',scaledSize:{width:70,height:75} ,scaledColor: '#0000'}})
+                this.marker_items.push({position: {lat: lat, lng: lng}, title: '現在地', icon: {url: 'http://pictogram2.com/p/p0957/3.png',scaledSize:{width:70,height:75} ,scaledColor: '#0000'}})
             }
         },
 
@@ -206,8 +247,10 @@ export default {
             let photo = shopdata.photo.pc.l
             let lat = shopdata.lat
             let lng = shopdata.lng
+            //店、詳細情報
             this.marker_items.push({position: {lat: parseFloat(lat), lng: parseFloat(lng)}, title: name, url: url, photo: photo,
                 address:shopdata.address, open:shopdata.open, capacity:shopdata.capacity, card:shopdata.card, id:shopdata.id,
+                non_smoking:shopdata.non_smoking, free_drink:shopdata.free_drink, free_food:shopdata.free_food, access:shopdata.access,
                 icon: {url: 'http://maps.google.co.jp/mapfiles/ms/icons/red-dot.png',scaledSize:{width:40,height:40} ,scaledColor: '#0000'}
                 , button:false})
             });
@@ -238,8 +281,13 @@ export default {
             this.time = this.marker_items[id].open
             this.capa = this.marker_items[id].capacity
             this.credit = this.marker_items[id].card
+            this.dirnk = this.marker_items[id].free_dirnk
+            this.eat = this.marker_items[id].free_food
+            this.smoking = this.marker_items[id].non_smoking
+            this.access = this.marker_items[id].access
             this.s_name = this.marker_items[id].title
             this.s_id = this.marker_items[id].id
+            
             //ボタンの押す押せない
             this.position_id = id
             this.insertClick = this.marker_items[id].button
@@ -623,6 +671,38 @@ button{
         width: 100%;
         height: 550px;
         overflow-y: scroll;
+    }
+    #page_top{
+        width: 50px;
+        height: 50px;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        background: #3fe0ef;
+        opacity: 0.6;
+    }
+    #page_top a{
+        position: relative;
+        display: block;
+        width: 50px;
+        height: 50px;
+        text-decoration: none;
+    }
+    #page_top a::before{
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        content: '\f106';
+        font-size: 25px;
+        color: #fff;
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        margin: auto;
+        text-align: center;
     }
 }
 </style>

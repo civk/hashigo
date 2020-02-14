@@ -31,11 +31,11 @@
                     <div id="shop" v-else>
                         <div id ="box">
                             <img v-bind:src="photo"><br>
-                            <h3><span class="shopname">{{name}}</span></h3><br>
-                            <a v-bind:href="url" target="_blank">ホットぺッパー</a><br>
+                            <h3><span class="shopname"><a v-bind:href="detail + id + f_lat + lat + f_lng + lng">{{name}}</a></span></h3><br>
+                            <!-- <a v-bind:href="url" target="_blank">ホットぺッパー</a><br> -->
                             予算：{{ budget }}<br>
-                            交通：{{ access }}<br>
-                            <a v-bind:href="detail + id + f_lat + lat + f_lng + lng">{{name}} の詳細ヘ</a>
+                            アクセス：{{ access }}
+                            <!-- <a v-bind:href="detail + id + f_lat + lat + f_lng + lng">{{name}} の詳細ヘ</a> -->
                         </div>
                     </div>
                 </div>
@@ -43,6 +43,8 @@
             <span class="hot_text">Powered by <a href="http://webservice.recruit.co.jp/">ホットペッパー Webサービス</a></span>
             <span class="hot_text">画像提供：ホットペッパー グルメ</span>
         </div>
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.4/css/all.css">
+            <div id="page_top"><a href="#"></a></div>
     </div>
 </div>
 </template> 
@@ -164,7 +166,7 @@ export default {
             }else{
                 this.isActive = false
             }
-        },
+        }
     }
 }
 </script>
@@ -248,7 +250,7 @@ button{
 /* マップ表示欄 */
 .col-lg-9 {
     margin-top: 10px;
-    margin-left: 20px;
+    margin-left: 15px;
     margin-right: -20px;
     position: relative;
     padding: 5px 5px 15px 5px;;
@@ -375,7 +377,7 @@ button{
         position: relative;
         padding: 5px 5px 15px 5px;;
         width: 100%; /* ボックス幅 */
-        height: 350px;
+        height: 440px;
         background-color: #ffffff; /* ボックス背景色 */
         color: #000; /* 文章色 */
         border: 5px solid orangered; /* 枠線 */
@@ -402,7 +404,7 @@ button{
     /* マップ設定 */
     .col-xs-6 #map {
         width: 100%;
-        height: 320px;
+        height: 420px;
         
     } 
 
@@ -416,12 +418,44 @@ button{
         border-bottom: 10px solid orangered;
         padding-top: 30px;
         margin-top: 10px;
-        margin-left: 5px;
+        margin-left: 2px;
         font-size: 1rem;
         font-weight: bold;
         width: 100%;
         height: 550px;
         white-space: pre-line;
+    }
+    #page_top{
+        width: 50px;
+        height: 50px;
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        background: #3fe0ef;
+        opacity: 0.6;
+    }
+    #page_top a{
+        position: relative;
+        display: block;
+        width: 50px;
+        height: 50px;
+        text-decoration: none;
+    }
+    #page_top a::before{
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        content: '\f106';
+        font-size: 25px;
+        color: #fff;
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        margin: auto;
+        text-align: center;
     }
 }
 </style>

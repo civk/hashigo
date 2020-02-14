@@ -22,6 +22,7 @@ Route::get('/detail', 'HotpepperController@detail')->name('detail');
 Route::get('/detail2', 'HotpepperController@thirdSearch')->name('detail2');
 Route::get('/top', 'ExampleController@example')->name('example');
 Route::get('/mypage', 'MypageController@hashigo_history')->name('mypage')->middleware('auth');
+Route::get('/mypage_favorite', 'FavoriteController@hashigo_favorite')->name('mypage_favorite')->middleware('auth');
 
 Route::get('/{any?}', function () {
     return view('example');
